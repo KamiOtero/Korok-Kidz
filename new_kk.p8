@@ -100,7 +100,7 @@ function logo_update()
             wallLeft()
             wallRight()
             wallBottom()
-            if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 3) then
+            if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
                     map_state="house"
                     player_y = 100
                     player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
@@ -112,12 +112,12 @@ function logo_update()
             wallLeft()
             wallRight()
             doorBottom()
-			if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 3) then
+			if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
                 map_state="townsquare"
                 player_y = 100
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
-			elseif (player_x >= 50 and player_x <= 80) and (player_y >= 125 and player_y <= 127) then
-                player_y=12
+			elseif (player_x >= 50 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+                player_y=10
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15} 
                 map_state="backyard"
 			end
@@ -128,12 +128,12 @@ function logo_update()
             wallTop()
             wallLeft()
             doorBottom()
-			if (player_x >= 50 and player_x <= 80) and (player_y >= 125 and player_y <= 127) then
-                player_y=12 
+			if (player_x >= 50 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+                player_y=10
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
                 map_state="playground"
-			elseif (player_x >= 50 and player_x <= 80) and (player_y >= 125 and player_y <= 127) then
-                player_x=12 
+			elseif (player_x >= 122 and player_x <= 127) and (player_y >= 50 and player_y <= 80) then
+                player_x=10
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
                 map_state="townsquare"
 			end
@@ -144,8 +144,8 @@ function logo_update()
         wallRight()
         wallBottom()
         wallTop()
-        if (player_x >= 0 and player_x <= 5) and (player_y >= 60 and player_y <= 80) then
-            player_x = 125
+        if (player_x >= 0 and player_x <= 5) and (player_y >= 50 and player_y <= 80) then
+            player_x = 100
             player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
             map_state="townsquare"
         end
@@ -156,8 +156,8 @@ function logo_update()
         wallLeft()
         wallTop()
         wallRight()
-        if (player_x >= 50 and player_x <= 80) and (player_y >= 125 and player_y <= 127) then
-            player_y=120
+        if (player_x >= 50 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+            player_y = 10
             player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
             map_state="townsquare"
         end
@@ -168,7 +168,7 @@ function logo_update()
         wallLeft()
         wallRight()
         wallBottom()
-        if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 3) then
+        if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
             player_y = 100
             map_state="school"
             player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
@@ -180,14 +180,22 @@ function logo_update()
         doorBottom()
         doorLeft()
         doorRight()
-			if player_x==54 and player_y==2 then
-                player_y=100 map_state="junkyard"
-			elseif player_x==54 and player_y==110 then
-                player_y=12 map_state="house"
-			elseif player_x==2 and player_y==54 then
-                player_x=100 map_state="school"
-			elseif player_x==110 and player_y==54 then
-                player_x=12 map_state="library"
+			if (player_x >= 50 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
+                player_y=100 
+                player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
+                map_state="junkyard"
+			elseif (player_x >= 50 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+                player_y=10
+                map_state="house"
+                player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
+			elseif (player_x >= 0 and player_x <= 5) and (player_y >= 50 and player_y <= 80) then
+                player_x=100
+                map_state="school"
+                player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
+			elseif (player_x >= 122 and player_x <= 127) and (player_y >= 50 and player_y <= 80) then
+                player_x=10 
+                map_state="library"
+                player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
 			end
 	end
 end
