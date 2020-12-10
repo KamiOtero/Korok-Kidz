@@ -1173,8 +1173,9 @@ function dtb_draw()
     end
 end
 
+--thanks to https://www.lexaloffle.com/bbs/?tid=2706
 function credits_init()
-    text = "hello lexaloffle thanks to blah and me"
+    text = "thanks for playing"
     f = 0
     state="credits"
     update=credits_update()
