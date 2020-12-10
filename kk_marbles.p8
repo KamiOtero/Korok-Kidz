@@ -14,6 +14,8 @@ function _init()
     speed=2
     kid_sprite=6
     frog_sprite=8
+    mid_1=44 --for walls/entries
+    mid_2=84 --for walls/entries
     dialog_cooldown = 0
     backyard_marble=false
     house_marble=false
@@ -22,6 +24,7 @@ function _init()
     school_marble=false
     playground_marble=false
     library_marble=false
+    win_marble=false
     win=false
     level=1 --for minigame
 
@@ -53,19 +56,19 @@ end
 function game_init()
 	state="game"
 	--hitboxes
-	player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15} -- 24,23,31,35
+	player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15} -- adjusted for sprite
 	top_border={0,0,127,0}
 	left_border={0,0,0,127}
 	right_border={127,0,127,127}
     bottom_border={0,127,127,127}
-    door_top1_border={0,0,40,0}
-    door_top2_border={80,0,127,0}
-    door_left1_border={0,0,0,40}
-    door_left2_border={0,80,0,127}
-    door_right1_border={127,0,127,40}
-    door_right2_border={127,80,127,127}
-    door_bottom1_border={0,127,60,127}
-    door_bottom2_border={80,127,127, 127}
+    door_top1_border={0,0,mid_1+5,0}
+    door_top2_border={mid_2-5,0,127,0}
+    door_left1_border={0,0,0,mid_1+5}
+    door_left2_border={0,mid_2-5,0,127}
+    door_right1_border={127,0,127,mid_1+5}
+    door_right2_border={127,mid_2-5,127,127}
+    door_bottom1_border={0,127,mid_1+5,127}
+    door_bottom2_border={mid_2-5,127,127,127}
 
 	froggo={60,62,69,69}
 	dialog_froggo={57,59,72,72}
@@ -85,7 +88,6 @@ function game_update()
     if(map_state=="backyard") then 
         if(intro==true and (dialog_cooldown <= 0) ) then
             dtb_disp("oh hello there! help me find my marbles? maybe sir froggo knows. click 'z' near him to talk to him.")
-            dialog_cooldown=5
             intro=false
         end
         --collide with froggo
@@ -108,7 +110,7 @@ function game_update()
 
             if btn(4) and (dialog_cooldown <= 0) and backyard_marble==true then
                 dtb_disp("nooo you got me, take good care of that preciouds marble")
-                dialog_cooldown=50
+                dialog_cooldown=100
             end
         end
     elseif(map_state=="house") then
@@ -121,7 +123,7 @@ function game_update()
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
             if btn(4) and (dialog_cooldown <= 0) then 
                 dtb_disp("hello welcome home")
-                dialog_cooldown=50
+                dialog_cooldown=100
             end
             if btn(5) and house_marble==false then 
                 level=2
@@ -129,17 +131,107 @@ function game_update()
             end
         end
     elseif(map_state=="townsquare") then
-
+		--collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("this is the town square!")
+                dialog_cooldown=100
+            end
+            if btn(5) and townsquare_marble==false then 
+                level=3
+                minigame_init()
+            end
+        end
     elseif(map_state=="junkyard")then
-
+		--collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("this is my junkyard >:c")
+                dialog_cooldown=100
+            end
+            if btn(5) and junkyard_marble==false then 
+                level=4
+                minigame_init()
+            end
+        end
     elseif(map_state=="school") then
-
+		--collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("school is cool")
+                dialog_cooldown=100
+            end
+            if btn(5) and school_marble==false then 
+                level=5
+                minigame_init()
+            end
+        end
     elseif(map_state=="playground") then
-
+		--collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("remember to take breaks and get some sunshine")
+                dialog_cooldown=100
+            end
+            if btn(5) and playground_marble==false then 
+                level=6
+                minigame_init()
+            end
+        end
     elseif(map_state=="library") then
-
+		--collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("reading is cool")
+                dialog_cooldown=100
+            end
+            if btn(5) and library_marble==false then 
+                level=7
+                minigame_init()
+            end
+        end
     elseif(map_state=="beach") then
-
+		--collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("you win! one last game... for all the marbles???")
+                dialog_cooldown=100
+            end
+            if btn(5) and win_marble==false then 
+                level=8
+                minigame_init()
+            end
+        end
     end
 
 	
@@ -172,19 +264,18 @@ function game_draw()
     elseif(map_state=="house") then
         sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     elseif(map_state=="townsquare") then
-
+		sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     elseif(map_state=="junkyard")then
-
+		sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     elseif(map_state=="school") then
-
+		sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     elseif(map_state=="playground") then
-
+		sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     elseif(map_state=="library") then
-
+		sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     elseif(map_state=="beach") then
-
+        sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
     end
-
 
 
     --display collected marbles
@@ -206,10 +297,16 @@ function game_draw()
     if (library_marble==true) spr(55, 120, 0, 1, 1)
 
     
-    if(win==true) then print("Lets go to the beach!!!", 20, 25) end
+    if(win==true) then print("Lets go to the beach!!!", 20, 25, 7) end
+    if(win_marble==true) then 
+        print("you are marble-ous!", 20, 35, 7) 
+        print("thanks for playing!", 25, 45, 7) 
+        function wait(a) for i = 1000,a do flip() end end --wait funciton
+        state="menu" 
+    end
 
     --debug
-    print(dialog_cooldown, 10, 10, 10)
+    --print(dialog_cooldown, 10, 10, 10) 
 
     --draw dialog
     dtb_draw()
@@ -269,7 +366,7 @@ function minigame_init()
 
     --add marbles in circle.
     if(level==1) then
-        marble2_sprite=32
+        marble2_sprite=49
         marble2x=64
         marble2y=34
         marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
@@ -282,19 +379,209 @@ function minigame_init()
         marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
         marble2_hit = false
 
-        marble3_sprite=33
+        marble3_sprite=50
         marble3x=44
         marble3y=34
         marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
         marble3_hit = false
 
     elseif(level==3) then
+		marble2_sprite=32
+        marble2x=64
+        marble2y=34
+        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
+        marble2_hit = false
 
+        marble3_sprite=33
+        marble3x=44
+        marble3y=34
+        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+        marble3_hit = false
+		
+		marble4_sprite=51
+        marble4x=77
+        marble4y=45
+        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+        marble4_hit = false
+		
     elseif(level==4) then
+		marble2_sprite=32
+        marble2x=64
+        marble2y=34
+        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
+        marble2_hit = false
+
+        marble3_sprite=33
+        marble3x=44
+        marble3y=34
+        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+        marble3_hit = false
+		
+		marble4_sprite=52
+        marble4x=77
+        marble4y=45
+        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+        marble4_hit = false
+		
+		marble5_sprite=35
+        marble5x=50
+        marble5y=50
+        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
+        marble5_hit = false
 
     elseif(level==5) then
+		marble2_sprite=32
+        marble2x=64
+        marble2y=34
+        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
+        marble2_hit = false
 
+        marble3_sprite=53
+        marble3x=44
+        marble3y=34
+        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+        marble3_hit = false
+
+		marble4_sprite=34
+        marble4x=77
+        marble4y=45
+        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+        marble4_hit = false
+		
+		marble5_sprite=35
+        marble5x=50
+        marble5y=50
+        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
+        marble5_hit = false
+		
+		marble6_sprite=36
+        marble6x=80
+        marble6y=28
+        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
+        marble6_hit = false
+		
     elseif(level==6) then
+		marble2_sprite=32
+        marble2x=64
+        marble2y=34
+        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
+        marble2_hit = false
+
+        marble3_sprite=33
+        marble3x=44
+        marble3y=34
+        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+        marble3_hit = false
+		
+		marble4_sprite=34
+        marble4x=77
+        marble4y=45
+        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+        marble4_hit = false
+		
+		marble5_sprite=54
+        marble5x=50
+        marble5y=50
+        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
+        marble5_hit = false
+		
+		marble6_sprite=36
+        marble6x=80
+        marble6y=28
+        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
+        marble6_hit = false
+		
+		marble7_sprite=37
+        marble7x=66
+        marble7y=50
+        marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
+        marble7_hit = false
+	
+	elseif(level==7) then
+		marble2_sprite=32
+        marble2x=64
+        marble2y=34
+        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
+        marble2_hit = false
+
+        marble3_sprite=33
+        marble3x=44
+        marble3y=34
+        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+        marble3_hit = false
+		
+		marble4_sprite=34
+        marble4x=77
+        marble4y=45
+        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+        marble4_hit = false
+		
+		marble5_sprite=35
+        marble5x=50
+        marble5y=50
+        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
+        marble5_hit = false
+		
+		marble6_sprite=36
+        marble6x=80
+        marble6y=28
+        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
+        marble6_hit = false
+		
+		marble7_sprite=37
+        marble7x=66
+        marble7y=50
+        marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
+        marble7_hit = false
+		
+		marble8_sprite=55
+        marble8x=70
+        marble8y=65
+        marble8_hitbox={marble8x, marble8y, marble8x + 7, marble8y + 7}
+        marble8_hit = false
+
+    elseif(level==8) then
+		marble2_sprite=49
+        marble2x=64
+        marble2y=34
+        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
+        marble2_hit = false
+
+        marble3_sprite=50
+        marble3x=44
+        marble3y=34
+        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+        marble3_hit = false
+		
+		marble4_sprite=51
+        marble4x=77
+        marble4y=45
+        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+        marble4_hit = false
+		
+		marble5_sprite=52
+        marble5x=50
+        marble5y=50
+        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
+        marble5_hit = false
+		
+		marble6_sprite=53
+        marble6x=80
+        marble6y=28
+        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
+        marble6_hit = false
+		
+		marble7_sprite=54
+        marble7x=66
+        marble7y=50
+        marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
+        marble7_hit = false
+		
+		marble8_sprite=55
+        marble8x=70
+        marble8y=65
+        marble8_hitbox={marble8x, marble8y, marble8x + 7, marble8y + 7}
+        marble8_hit = false
 
     end
 
@@ -332,9 +619,9 @@ function update_minigame()
 		end
 		if (btnp(5)) then 
 			select=true 
-			if powery1 >= 60 and powery1 <= 70 then speed=3 end
-			if powery1 >= 70 and powery1 <= 80 then speed=2 end
-			if powery1 >= 80 and powery1 <= 90 then speed=1 end
+			if powery1 >= 60 and powery1 <= 70 then speed=6 end
+			if powery1 >= 70 and powery1 <= 80 then speed=4 end
+			if powery1 >= 80 and powery1 <= 90 then speed=2 end
 		end
 		if select==true then
 			main_marble_mover()
@@ -366,13 +653,270 @@ function update_minigame()
 					marble3y-=speed
 				end
 			elseif(level==3) then
-
+				--marble2
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+					marble2_hit=true
+				end
+				if marble2_hit == true then
+					marble2x+=speed --TODO: Update so it goes opposite of player marble
+					marble2y-=speed
+				end
+				--marble3
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+					marble3_hit=true
+				end
+				if marble3_hit == true then
+					marble3x-=speed
+					marble3y-=speed
+				end
+				--marble4
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+					marble4_hit=true
+				end
+				if marble4_hit == true then
+					marble4x-=speed
+					marble4y-=speed
+				end
 			elseif(level==4) then
-
+				--marble2
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+					marble2_hit=true
+				end
+				if marble2_hit == true then
+					marble2x+=speed --TODO: Update so it goes opposite of player marble
+					marble2y-=speed
+				end
+				--marble3
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+					marble3_hit=true
+				end
+				if marble3_hit == true then
+					marble3x-=speed
+					marble3y-=speed
+				end
+				--marble4
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+					marble4_hit=true
+				end
+				if marble4_hit == true then
+					marble4x-=speed
+					marble4y-=speed
+				end
+				--marble5
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
+					marble5_hit=true
+				end
+				if marble5_hit == true then
+					marble5x-=speed
+					marble5y-=speed
+				end
+				
 			elseif(level==5) then
+				--marble2
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+					marble2_hit=true
+				end
+				if marble2_hit == true then
+					marble2x+=speed --TODO: Update so it goes opposite of player marble
+					marble2y-=speed
+				end
+				--marble3
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+					marble3_hit=true
+				end
+				if marble3_hit == true then
+					marble3x-=speed
+					marble3y-=speed
+				end
+				--marble4
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+					marble4_hit=true
+				end
+				if marble4_hit == true then
+					marble4x-=speed
+					marble4y-=speed
+				end
+				--marble5
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
+					marble5_hit=true
+				end
+				if marble5_hit == true then
+					marble5x-=speed
+					marble5y-=speed
+				end
+				--marble6
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
+					marble6_hit=true
+				end
+				if marble6_hit == true then
+					marble6x-=speed
+					marble6y-=speed
+				end
 
 			elseif(level==6) then
-
+				--marble2
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+					marble2_hit=true
+				end
+				if marble2_hit == true then
+					marble2x+=speed --TODO: Update so it goes opposite of player marble
+					marble2y-=speed
+				end
+				--marble3
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+					marble3_hit=true
+				end
+				if marble3_hit == true then
+					marble3x-=speed
+					marble3y-=speed
+				end
+				--marble4
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+					marble4_hit=true
+				end
+				if marble4_hit == true then
+					marble4x-=speed
+					marble4y-=speed
+				end
+				--marble5
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
+					marble5_hit=true
+				end
+				if marble5_hit == true then
+					marble5x-=speed
+					marble5y-=speed
+				end
+				--marble6
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
+					marble6_hit=true
+				end
+				if marble6_hit == true then
+					marble6x-=speed
+					marble6y-=speed
+				end
+				--marble7
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
+					marble7_hit=true
+				end
+				if marble7_hit == true then
+					marble7x-=speed
+					marble7y-=speed
+				end
+			
+			elseif(level==7) then
+				--marble2
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+					marble2_hit=true
+				end
+				if marble2_hit == true then
+					marble2x+=speed --TODO: Update so it goes opposite of player marble
+					marble2y-=speed
+				end
+				--marble3
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+					marble3_hit=true
+				end
+				if marble3_hit == true then
+					marble3x-=speed
+					marble3y-=speed
+				end
+				--marble4
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+					marble4_hit=true
+				end
+				if marble4_hit == true then
+					marble4x-=speed
+					marble4y-=speed
+				end
+				--marble5
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
+					marble5_hit=true
+				end
+				if marble5_hit == true then
+					marble5x-=speed
+					marble5y-=speed
+				end
+				--marble6
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
+					marble6_hit=true
+				end
+				if marble6_hit == true then
+					marble6x-=speed
+					marble6y-=speed
+				end
+				--marble7
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
+					marble7_hit=true
+				end
+				if marble7_hit == true then
+					marble7x-=speed
+					marble7y-=speed
+				end
+				--marble8
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble8_hitbox[1], marble8_hitbox[2], marble8_hitbox[3], marble8_hitbox[4])  then
+					marble8_hit=true
+				end
+				if marble8_hit == true then
+					marble8x-=speed
+					marble8y-=speed
+                end
+            elseif(level==8) then
+				--marble2
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+					marble2_hit=true
+				end
+				if marble2_hit == true then
+					marble2x+=speed --TODO: Update so it goes opposite of player marble
+					marble2y-=speed
+				end
+				--marble3
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+					marble3_hit=true
+				end
+				if marble3_hit == true then
+					marble3x-=speed
+					marble3y-=speed
+				end
+				--marble4
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+					marble4_hit=true
+				end
+				if marble4_hit == true then
+					marble4x-=speed
+					marble4y-=speed
+				end
+				--marble5
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
+					marble5_hit=true
+				end
+				if marble5_hit == true then
+					marble5x-=speed
+					marble5y-=speed
+				end
+				--marble6
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
+					marble6_hit=true
+				end
+				if marble6_hit == true then
+					marble6x-=speed
+					marble6y-=speed
+				end
+				--marble7
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
+					marble7_hit=true
+				end
+				if marble7_hit == true then
+					marble7x-=speed
+					marble7y-=speed
+				end
+				--marble8
+				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble8_hitbox[1], marble8_hitbox[2], marble8_hitbox[3], marble8_hitbox[4])  then
+					marble8_hit=true
+				end
+				if marble8_hit == true then
+					marble8x-=speed
+					marble8y-=speed
+                end
 			end
 		end
 	end
@@ -407,13 +951,43 @@ function draw_minigame()
 		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
 		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
 	elseif(level==3) then
-
+		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
 	elseif(level==4) then
-
+		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
+		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
 	elseif(level==5) then
-
+		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
+		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
+		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
 	elseif(level==6) then
-
+		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
+		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
+		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
+		spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
+	elseif(level==7) then
+		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
+		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
+		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
+		spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
+        spr(marble8_sprite, marble8x, marble8y, marble_width, marble_height)
+    elseif(level==8) then
+		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
+		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
+		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
+		spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
+		spr(marble8_sprite, marble8x, marble8y, marble_width, marble_height)
 	end
 
 	--check win condition
@@ -422,16 +996,21 @@ function draw_minigame()
 	elseif(level==2) then 
 		if(marble2_hit == true and marble3_hit == true and marbley > 100 ) then house_marble=true state="game" end
 	elseif(level==3) then
-
+		if(marble2_hit == true and marble3_hit == true and marble4_hit == true and marbley > 100 ) then townsquare_marble=true state="game" end
 	elseif(level==4) then
-
+		if(marble2_hit == true and marble3_hit == true and marble4_hit == true and marble5_hit == true and marbley > 100 ) then junkyard_marble=true state="game" end
 	elseif(level==5) then
-
+		if(marble2_hit == true and marble3_hit == true and marble4_hit == true and marble5_hit == true and marble6_hit == true and marbley > 100 ) then school_marble=true state="game" end
 	elseif(level==6) then
-
+		if(marble2_hit == true and marble3_hit == true and marble4_hit == true and marble5_hit == true and marble6_hit == true and marble7_hit == true and marbley > 100 ) then playground_marble=true state="game" end
+	elseif(level==7) then
+		if(marble2_hit == true and marble3_hit == true and marble4_hit == true and marble5_hit == true and marble6_hit == true and marble7_hit == true and marble8_hit == true and marbley > 100 ) then library_marble=true state="game" end
+    elseif(level==8) then
+		if(marble2_hit == true and marble3_hit == true and marble4_hit == true and marble5_hit == true and marble6_hit == true and marble7_hit == true and marble8_hit == true and marbley > 100 ) then win_marble=true state="game" end
 	end
 end
-   
+
+ 
 function main_marble_mover()
 	marbley-=speed marblex=marblex 
 	marble_hitbox[2]-=speed
@@ -453,13 +1032,6 @@ function main_marble_mover()
 		marble_hitbox[4] = marbley + 7
 	end
 end
-
-
-
-
-
-
-
 --other states
 --logo state
 function logo_init()
@@ -494,7 +1066,7 @@ end
 --menu state
 function menu_init()
     --variables for menu
-    options = {"new game", "how to play", "quit"}
+    options = {"play!", "how to play", "quit"}
     selected = 0
     numoptions = 3
     input=0
@@ -662,13 +1234,13 @@ end
 
 --game helpers
 function map_update()
-	--backyard
+    --backyard
     if map_state=="backyard" then
             doorTop()
             wallLeft()
             wallRight()
             wallBottom()
-            if (player_x >= 40 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
+            if (player_x >= mid_1 and player_x <= mid_2) and (player_y <= -5) then
                     map_state="house"
                     player_y = 100
                     player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
@@ -680,11 +1252,11 @@ function map_update()
             wallLeft()
             wallRight()
             doorBottom()
-			if (player_x >= 40 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
+			if (player_x >= mid_1 and player_x <= mid_2) and (player_y <= -5) then
                 map_state="townsquare"
                 player_y = 100
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
-			elseif (player_x >= 40 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+			elseif (player_x >= mid_1 and player_x <= mid_2) and (player_y >= 128) then
                 player_y=10
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15} 
                 map_state="backyard"
@@ -696,11 +1268,11 @@ function map_update()
             wallTop()
             wallLeft()
             doorBottom()
-			if (player_x >= 40 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+			if (player_x >= mid_1 and player_x <= mid_2) and (player_y >= 128) then
                 player_y=10
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
                 map_state="playground"
-			elseif (player_x >= 122 and player_x <= 127) and (player_y >= 40 and player_y <= 80) then
+			elseif (player_x >= 128) and (player_y >= mid_1 and player_y <= mid_2) then
                 player_x=10
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
                 map_state="townsquare"
@@ -712,7 +1284,7 @@ function map_update()
         wallRight()
         wallBottom()
         wallTop()
-        if (player_x >= 0 and player_x <= 5) and (player_y >= 40 and player_y <= 80) then
+        if (player_x <= -5) and (player_y >= mid_1 and player_y <= mid_2) then
             player_x = 100
             player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
             map_state="townsquare"
@@ -724,7 +1296,7 @@ function map_update()
         wallLeft()
         wallTop()
         wallRight()
-        if (player_x >= 40 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+        if (player_x >= mid_1 and player_x <= mid_2) and (player_y >= 128) then
             player_y = 10
             player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
             map_state="townsquare"
@@ -736,7 +1308,7 @@ function map_update()
         wallLeft()
         wallRight()
         wallBottom()
-        if (player_x >= 40 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
+        if (player_x >= mid_1 and player_x <= mid_2) and (player_y <= -5) then
             player_y = 100
             map_state="school"
             player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
@@ -748,31 +1320,37 @@ function map_update()
         doorBottom()
         doorLeft()
         doorRight()
-			if (player_x >= 40 and player_x <= 80) and (player_y >= 0 and player_y <= 5) then
+			if (player_x >= mid_1 and player_x <= mid_2) and (player_y <= -5) then
                 player_y=100 
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
                 map_state="junkyard"
-			elseif (player_x >= 40 and player_x <= 80) and (player_y >= 122 and player_y <= 127) then
+			elseif (player_x >= mid_1 and player_x <= mid_2) and (player_y >= 128) then
                 player_y=10
                 map_state="house"
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
-			elseif (player_x >= 0 and player_x <= 5) and (player_y >= 40 and player_y <= 80) then
+			elseif (player_x <= -5) and (player_y >= mid_1 and player_y <= mid_2) then
                 player_x=100
                 map_state="school"
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
-			elseif (player_x >= 122 and player_x <= 127) and (player_y >= 40 and player_y <= 80) then
+			elseif (player_x >= 128) and (player_y >= mid_1 and player_y <= mid_2) then
                 player_x=10 
                 map_state="library"
                 player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15}
 			end
-	end
+    end
+    if map_state=="beach" then
+        wallLeft()
+        wallRight()
+        wallBottom()
+        wallTop()
+    end
 end
 
 
 -->8
 --dialog
 
---bellow needed for dialog--
+--bellow needed for dialog found on laxofelle: FIND LINK AGAIN --
 
 -- call this before you start using dtb.
 -- optional parameter is the number of lines that are displayed. default is 3.
@@ -829,8 +1407,6 @@ function _dtb_clean()
     end
     dtb_curline=0
     dtb_ltime=0
-    --return to game state
-    if state~="logo" then state="game" end
 end
 
 function _dtb_nextline()
@@ -930,22 +1506,30 @@ __gfx__
 03333333333c003003333333333c003003333333333c003000000011110000001100000000000011ff5ff5ff636363633333633344999944cccccccc23551669
 00333333333330000033333333333000003333333333300000000010010000000000000000000000ffffffff363636363336d53344499444cccccccc23551669
 00033300003333000003330000333300000333000033330000000000000000000000000000000000fffffff5636363633336d53344444444cccccccc23551669
-00cccc000088880000bbbb000099990000ffff00001111000000000000000000000000000000000000666dd06666666666666666666666662222222211111111
-0c1111c0082222800b3333b009aaaa900f7777f001cccc1000000000000000000000000000000000066ddddd6666666666666666666666662222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc10000000000000000000000000000000066dddddd6666666666666666444444442222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc100000000000000000000000000000000666ddddd6666666665888856444444442222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc100000000000000000000000000000000dddddd556666666666888866444444442222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc100000000000000000000000000000000dddddd556666666666888866444444442222222211111111
-0c1111c0082222800b3333b009aaaa900f7777f001cccc10000000000000000000000000000000000d5d55556666666665888856444444442222222211111111
-00cccc000088880000bbbb000099990000ffff000011110000000000000000000000000000000000005555006666666666666666444444442222222211111111
-001111000088880000bbbb000099990000ffff0000cccc000044440000777700006666000000000000000000444444440000000033333b3333b6555665556b33
-01234510082222800b3333b009aaaa900f7777f00c1911c0049999400700007006777760000000000000000044444444000000003b3333b33b665656656565b3
-16789ab182e22228b331a33b9aaa4aa9f77dd77fc191911c40909094707777076777777600000000000000004444444400000000bbb55b6633b5565565656b33
-1cdef231822ee228b33a133b94aaa4a9f7d99d7fc919191c49090904707887076777777600000000000000004444444400000000555555553355555665656533
-14567891822ee228b331a33b9a4aaa49f7d99d7fc191919c40909094707887076777777600000000000000004444444400000000666666553356565655555b33
-1abcdef182222e28b33a133b9aa4aaa9f77dd77fc119191c490909047077770767777776000000000000000044444444000000005555555533b65655556565b3
-01234510082222800b3333b009aaaa900f7777f00c1191c004999940070000700677776000000000000000004444444400000000566556663b65565665656b33
-001111000088880000bbbb000099990000ffff0000cccc00004444000077770000666600000000000000000044444444000000005555555533b5565665556533
+00cccc000088880000bbbb000099990000ffff00001111000044440000000000000000000000000000666dd06666666666666666666666662222222211111111
+0c1111c0082222800b3333b009aaaa900f7777f001cccc1004ffff40000000000000000000000000066ddddd6666666666666666666666662222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc14ffffff400000000000000000000000066dddddd6666666666666666444444442222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc14ffffff4000000000000000000000000666ddddd6666666665888856444444442222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc14ffffff4000000000000000000000000dddddd556666666666888866444444442222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc14ffffff4000000000000000000000000dddddd556666666666888866444444442222222211111111
+0c1111c0082222800b3333b009aaaa900f7777f001cccc1004ffff400000000000000000000000000d5d55556666666665888856444444442222222211111111
+00cccc000088880000bbbb000099990000ffff000011110000444400000000000000000000000000005555006666666666666666444444442222222211111111
+001111000088880000bbbb00009999000088cc0000cccc000044440000777700006666000000000000000000444444440000000033333b3333b6555665556b33
+01234510082222800b3333b009aaaa9008821cc00c1911c0049999400788887006777760000000000000000044444444000000003b3333b33b665656656565b3
+16789ab182e22228b331a33b9aaa4aa9882211ccc191911c40909094787777876777777600000000000000004444444400000000bbb55b6633b5565565656b33
+1cdef231822ee228b33a133b94aaa4a98222111cc919191c49090904787887876777777600000000000000004444444400000000555555553355555665656533
+14567891822ee228b331a33b9a4aaa49a999333bc191919c40909094787887876777777600000000000000004444444400000000666666553356565655555b33
+1abcdef182222e28b33a133b9aa4aaa9aa9933bbc119191c490909047877778767777776000000000000000044444444000000005555555533b65655556565b3
+01234510082222800b3333b009aaaa900aa93bb00c1191c004999940078888700677776000000000000000004444444400000000566556663b65565665656b33
+001111000088880000bbbb000099990000aabb0000cccc00004444000077770000666600000000000000000044444444000000005555555533b5565665556533
+18eeeee1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+18eeeee1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+18eeeee1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+11111111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+cccccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+cccccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+cccccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+cccccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __label__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -1086,8 +1670,8 @@ __map__
 3f0c0c0c0b1c090a1c0c090c0c0a0c3e1d0a0c090b1d0d0d0d0d1d090a0b091d3f0b0b09090c0c0a0c0c090c0b090b3f1f1f1f1f2b2b2b2b2b2b2b2b1f1f1f1f2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b3c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3f090c0c0a0b0a0a090a1c0c0c0b0c3e1d090b0c0a1d0d0d0d0d1d0c0b090a1d3f090c0c0c0b0c0c0c0a0c0a0c0c0b3f3b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b3c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3f0c0b090b0a0b0c0c0b0a0c0a0a0c3e1d1d1d1d1d1d0d0d0d0d1d1d1d1d1d1d3f0b0c0a0c0c0c0a0c0c0a0c0c0b0c3f3b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b3c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-3f090c0a090a3e3d3d3f0c090c090c3e0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d3f0c0c0c0c0a0c0c0b0c0c0a0c0c0a3f3b2b2d2b2d2b2d2b2b2b2d2b2d2b2d2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b3c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-3f0c090c0c0c3e1e1e3f0c0b0c0c0c3e0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d3f0c0a0c0c0c0a1e1e0c0a0c0a0c0c3f3b2b2c2b2c2b2c2b2b2b2c2b2c2b2c2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+3f090c0a090a3e3d3d3f0c090c090c3e0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d3f0c0c0c0c0a1c1c1c1c0c0a0c0c0a3f3b2b2d2b2d2b2d2b2b2b2d2b2d2b2d2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b3c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+3f0c090c0c0c3e1e1e3f0c0b0c0c0c3e0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d3f0c0a0c0c0c1c1e1e1c0a0c0a0c0c3f3b2b2c2b2c2b2c2b2b2b2c2b2c2b2c2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3f0a0c0b0c093e1e1e3f090c0a0b0c3e0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d3f0c1a1a1a1a1a1e1e1a1a1a1a1a0c3f3b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3f0c0c0c0c0c3e0e0e3f0c0c0a0c0c3e0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d3f0c1a1a1a1a1a1a1a1a1a1a1a1a0c3f3b2b2d2b2d2b2d2b2b2b2d2b2d2b2d2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3f090b09090a090c0c090b0c0c09093e1d1d1d1d1d1d0d0d0d0d1d1d1d1d1d1d3f0a1a1a1a1a1a1a1a1a1a1a1a1a0a3f3b2b2c2b2c2b2c2b2b2b2c2b2c2b2c2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -1097,10 +1681,10 @@ __map__
 3f0c090c090c0b09090b090c0c090b3e1d0b090c0b1d0d0d0d0d1d0c090b091d3f0b0a0c0a0c0a0c0c0a0c0c090a0b3f3b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b3c3c3c3c3c3c3c3c3c3c3c3c3c3c2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d1d1d1d1d1d1d0d0d0d0d1d1d1d1d1d1d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3b3b3b3b3b3b3b2b2b2b2d2d2d2d2d2d2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 2b2b2b2b2b2b2e2e2e2e2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-2b2e2e1e2e2e2e2e2e2e2e2e1e2e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a2b2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-2b2e1e2e2e2e2e2e2e2e2e2e2e1e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-2b1e2e2e2e2e2e2e2e2e2e2e2e2e1e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-2b2e2e2e2e2e2e2e2e2e2e2e2e2e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2b3b401f1f2b2e2e2e2e2b3b40403b2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2b2e1e2e2e2b2e2e2e2e2b2e1e1e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2b2e2e2e2e2b2e2e2e2e2b2e2e2e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2b2e2e2e2e2b2e2e2e2e2b2e2e2e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 2b2e2e2e2e2e2e2e2e2e2e2e2e2e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 2b2e2e2e2e2e2e2e2e2e2e2e2e2e2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b2f2f2f2f2f2f2f2f2f2f2f2f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 2b2e2e2e2e2e2e2e2e2e2e2b2d2b2e2b2b1a1a1a1a1a1a1a1a1a1a1a1a1a1a2b2f2f2f2f2f1f1f1f1f2f2f2f1f1f1f1f1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
