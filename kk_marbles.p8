@@ -16,7 +16,7 @@ function _init()
     frog_sprite=8
     mid_1=44 --for walls/entries
     mid_2=84 --for walls/entries
-    dialog_cooldown = 0
+    dialog_cooldown=0
     backyard_marble=false
     house_marble=false
     townsquare_marble=false
@@ -364,225 +364,96 @@ function minigame_init()
     --main circle
     circ_hitbox={31, 11, 97, 77}
 
+    xmin=40
+    xmax=40
+    ymin=20
+    ymax=40
     --add marbles in circle.
-    if(level==1) then
+    if(level>=1) then
         marble2_sprite=49
-        marble2x=64
-        marble2y=34
+        marble2x=xmin + rnd(xmax) 
+        marble2y=ymin + rnd(ymax) 
         marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
         marble2_hit = false
 
-    elseif(level==2) then
-        marble2_sprite=32
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
+        if(level>=2) then
+            marble2_sprite=32
+            marble3_sprite=50
+            marble3x=xmin + rnd(xmax)  
+            marble3y=ymin + rnd(ymax) 
+            marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
+            marble3_hit = false
 
-        marble3_sprite=50
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
+            if(level>=3) then  
+                marble2_sprite=32
+                marble3_sprite=33              
+                marble4_sprite=51
+                marble4x=xmin + rnd(xmax)  
+                marble4y=ymin + rnd(ymax)
+                marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
+                marble4_hit = false
+		
+                if(level>=4) then
+                    marble2_sprite=32
+                    marble3_sprite=33              
+                    marble4_sprite=34
+                    marble5_sprite=52
+                    marble5x=xmin + rnd(xmax)  
+                    marble5y=ymin + rnd(ymax)
+                    marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
+                    marble5_hit = false
 
-    elseif(level==3) then
-		marble2_sprite=32
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
-
-        marble3_sprite=33
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
+                   if(level>=5) then
+                        marble2_sprite=32
+                        marble3_sprite=33              
+                        marble4_sprite=34
+                        marble5_sprite=35
+                        marble6_sprite=53
+                        marble6x=xmin + rnd(xmax) 
+                        marble6y=ymin + rnd(ymax)
+                        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
+                        marble6_hit = false
 		
-		marble4_sprite=51
-        marble4x=77
-        marble4y=45
-        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
-        marble4_hit = false
-		
-    elseif(level==4) then
-		marble2_sprite=32
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
-
-        marble3_sprite=33
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
-		
-		marble4_sprite=52
-        marble4x=77
-        marble4y=45
-        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
-        marble4_hit = false
-		
-		marble5_sprite=35
-        marble5x=50
-        marble5y=50
-        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
-        marble5_hit = false
-
-    elseif(level==5) then
-		marble2_sprite=32
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
-
-        marble3_sprite=53
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
-
-		marble4_sprite=34
-        marble4x=77
-        marble4y=45
-        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
-        marble4_hit = false
-		
-		marble5_sprite=35
-        marble5x=50
-        marble5y=50
-        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
-        marble5_hit = false
-		
-		marble6_sprite=36
-        marble6x=80
-        marble6y=28
-        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
-        marble6_hit = false
-		
-    elseif(level==6) then
-		marble2_sprite=32
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
-
-        marble3_sprite=33
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
-		
-		marble4_sprite=34
-        marble4x=77
-        marble4y=45
-        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
-        marble4_hit = false
-		
-		marble5_sprite=54
-        marble5x=50
-        marble5y=50
-        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
-        marble5_hit = false
-		
-		marble6_sprite=36
-        marble6x=80
-        marble6y=28
-        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
-        marble6_hit = false
-		
-		marble7_sprite=37
-        marble7x=66
-        marble7y=50
-        marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
-        marble7_hit = false
+                        if(level>=6) then
+                            marble2_sprite=32
+                            marble3_sprite=33              
+                            marble4_sprite=34
+                            marble5_sprite=35
+                            marble6_sprite=36
+                            marble7_sprite=54
+                            marble7x=xmin + rnd(xmax)  
+                            marble7y=ymin + rnd(ymax)
+                            marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
+                            marble7_hit = false
 	
-	elseif(level==7) then
-		marble2_sprite=32
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
-
-        marble3_sprite=33
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
-		
-		marble4_sprite=34
-        marble4x=77
-        marble4y=45
-        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
-        marble4_hit = false
-		
-		marble5_sprite=35
-        marble5x=50
-        marble5y=50
-        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
-        marble5_hit = false
-		
-		marble6_sprite=36
-        marble6x=80
-        marble6y=28
-        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
-        marble6_hit = false
-		
-		marble7_sprite=37
-        marble7x=66
-        marble7y=50
-        marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
-        marble7_hit = false
-		
-		marble8_sprite=55
-        marble8x=70
-        marble8y=65
-        marble8_hitbox={marble8x, marble8y, marble8x + 7, marble8y + 7}
-        marble8_hit = false
-
-    elseif(level==8) then
-		marble2_sprite=49
-        marble2x=64
-        marble2y=34
-        marble2_hitbox={marble2x, marble2y, marble2x + 7, marble2y + 7}
-        marble2_hit = false
-
-        marble3_sprite=50
-        marble3x=44
-        marble3y=34
-        marble3_hitbox={marble3x, marble3y, marble3x + 7, marble3y + 7}
-        marble3_hit = false
-		
-		marble4_sprite=51
-        marble4x=77
-        marble4y=45
-        marble4_hitbox={marble4x, marble4y, marble4x + 7, marble4y + 7}
-        marble4_hit = false
-		
-		marble5_sprite=52
-        marble5x=50
-        marble5y=50
-        marble5_hitbox={marble5x, marble5y, marble5x + 7, marble5y + 7}
-        marble5_hit = false
-		
-		marble6_sprite=53
-        marble6x=80
-        marble6y=28
-        marble6_hitbox={marble6x, marble6y, marble6x + 7, marble6y + 7}
-        marble6_hit = false
-		
-		marble7_sprite=54
-        marble7x=66
-        marble7y=50
-        marble7_hitbox={marble7x, marble7y, marble7x + 7, marble7y + 7}
-        marble7_hit = false
-		
-		marble8_sprite=55
-        marble8x=70
-        marble8y=65
-        marble8_hitbox={marble8x, marble8y, marble8x + 7, marble8y + 7}
-        marble8_hit = false
-
+                            if(level>=7) then
+                                marble2_sprite=32
+                                marble3_sprite=33              
+                                marble4_sprite=34
+                                marble5_sprite=35
+                                marble6_sprite=36
+                                marble7_sprite=37
+                                marble8_sprite=55
+                                marble8x=xmin + rnd(xmax)  
+                                marble8y=ymin + rnd(ymax)
+                                marble8_hitbox={marble8x, marble8y, marble8x + 7, marble8y + 7}
+                                marble8_hit = false
+                                if(level>=8)then
+                                    --final beach level
+                                    marble2_sprite=49
+                                    marble3_sprite=50
+                                    marble4_sprite=51
+                                    marble5_sprite=52
+                                    marble6_sprite=53
+                                    marble7_sprite=54
+                                    marble8_sprite=55
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
     end
 
     state="minigame"
@@ -626,298 +497,76 @@ function update_minigame()
 		if select==true then
 			main_marble_mover()
 
-			if(level==1) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-			elseif(level==2) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-			elseif(level==3) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-				--marble4
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
-					marble4_hit=true
-				end
-				if marble4_hit == true then
-					marble4x-=speed
-					marble4y-=speed
-				end
-			elseif(level==4) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-				--marble4
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
-					marble4_hit=true
-				end
-				if marble4_hit == true then
-					marble4x-=speed
-					marble4y-=speed
-				end
-				--marble5
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
-					marble5_hit=true
-				end
-				if marble5_hit == true then
-					marble5x-=speed
-					marble5y-=speed
-				end
-				
-			elseif(level==5) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-				--marble4
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
-					marble4_hit=true
-				end
-				if marble4_hit == true then
-					marble4x-=speed
-					marble4y-=speed
-				end
-				--marble5
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
-					marble5_hit=true
-				end
-				if marble5_hit == true then
-					marble5x-=speed
-					marble5y-=speed
-				end
-				--marble6
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
-					marble6_hit=true
-				end
-				if marble6_hit == true then
-					marble6x-=speed
-					marble6y-=speed
-				end
-
-			elseif(level==6) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-				--marble4
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
-					marble4_hit=true
-				end
-				if marble4_hit == true then
-					marble4x-=speed
-					marble4y-=speed
-				end
-				--marble5
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
-					marble5_hit=true
-				end
-				if marble5_hit == true then
-					marble5x-=speed
-					marble5y-=speed
-				end
-				--marble6
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
-					marble6_hit=true
-				end
-				if marble6_hit == true then
-					marble6x-=speed
-					marble6y-=speed
-				end
-				--marble7
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
-					marble7_hit=true
-				end
-				if marble7_hit == true then
-					marble7x-=speed
-					marble7y-=speed
-				end
-			
-			elseif(level==7) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-				--marble4
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
-					marble4_hit=true
-				end
-				if marble4_hit == true then
-					marble4x-=speed
-					marble4y-=speed
-				end
-				--marble5
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
-					marble5_hit=true
-				end
-				if marble5_hit == true then
-					marble5x-=speed
-					marble5y-=speed
-				end
-				--marble6
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
-					marble6_hit=true
-				end
-				if marble6_hit == true then
-					marble6x-=speed
-					marble6y-=speed
-				end
-				--marble7
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
-					marble7_hit=true
-				end
-				if marble7_hit == true then
-					marble7x-=speed
-					marble7y-=speed
-				end
-				--marble8
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble8_hitbox[1], marble8_hitbox[2], marble8_hitbox[3], marble8_hitbox[4])  then
-					marble8_hit=true
-				end
-				if marble8_hit == true then
-					marble8x-=speed
-					marble8y-=speed
+            if level>=1 then
+                --marble2
+                if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
+                    marble2_hit=true
                 end
-            elseif(level==8) then
-				--marble2
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble2_hitbox[1], marble2_hitbox[2], marble2_hitbox[3], marble2_hitbox[4])  then
-					marble2_hit=true
-				end
-				if marble2_hit == true then
-					marble2x+=speed --TODO: Update so it goes opposite of player marble
-					marble2y-=speed
-				end
-				--marble3
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
-					marble3_hit=true
-				end
-				if marble3_hit == true then
-					marble3x-=speed
-					marble3y-=speed
-				end
-				--marble4
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
-					marble4_hit=true
-				end
-				if marble4_hit == true then
-					marble4x-=speed
-					marble4y-=speed
-				end
-				--marble5
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
-					marble5_hit=true
-				end
-				if marble5_hit == true then
-					marble5x-=speed
-					marble5y-=speed
-				end
-				--marble6
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
-					marble6_hit=true
-				end
-				if marble6_hit == true then
-					marble6x-=speed
-					marble6y-=speed
-				end
-				--marble7
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
-					marble7_hit=true
-				end
-				if marble7_hit == true then
-					marble7x-=speed
-					marble7y-=speed
-				end
-				--marble8
-				if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble8_hitbox[1], marble8_hitbox[2], marble8_hitbox[3], marble8_hitbox[4])  then
-					marble8_hit=true
-				end
-				if marble8_hit == true then
-					marble8x-=speed
-					marble8y-=speed
+                if marble2_hit == true then
+                    marble2x+=speed --TODO: Update so it goes opposite of player marble
+                    marble2y-=speed
                 end
-			end
+                if level>=2 then
+                    --marble3
+                    if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble3_hitbox[1], marble3_hitbox[2], marble3_hitbox[3], marble3_hitbox[4])  then
+                        marble3_hit=true
+                    end
+                    if marble3_hit == true then
+                        marble3x-=speed
+                        marble3y-=speed
+                    end
+                    if level>=3 then
+                        --marble4
+                        if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble4_hitbox[1], marble4_hitbox[2], marble4_hitbox[3], marble4_hitbox[4])  then
+                            marble4_hit=true
+                        end
+                        if marble4_hit == true then
+                            marble4x+=speed
+                            marble4y-=speed
+                        end
+                        if level>=4 then
+                            --marble5
+                            if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble5_hitbox[1], marble5_hitbox[2], marble5_hitbox[3], marble5_hitbox[4])  then
+                                marble5_hit=true
+                            end
+                            if marble5_hit == true then
+                                marble5x-=speed
+                                marble5y-=speed
+                            end
+                            if level>=5 then
+                                --marble6
+                                if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble6_hitbox[1], marble6_hitbox[2], marble6_hitbox[3], marble6_hitbox[4])  then
+                                    marble6_hit=true
+                                end
+                                if marble6_hit == true then
+                                    marble6x-=speed
+                                    marble6y-=speed
+                                end
+                                if level>=6 then
+                                    --marble7
+                                    if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble7_hitbox[1], marble7_hitbox[2], marble7_hitbox[3], marble7_hitbox[4])  then
+                                        marble7_hit=true
+                                    end
+                                    if marble7_hit == true then
+                                        marble7x+=speed
+                                        marble7y-=speed
+                                    end
+                                    if level>=7 then
+                                        --marble8
+                                        if hitbox_collide(marble_hitbox[1], marble_hitbox[2], marble_hitbox[3], marble_hitbox[4],   marble8_hitbox[1], marble8_hitbox[2], marble8_hitbox[3], marble8_hitbox[4])  then
+                                            marble8_hit=true
+                                        end
+                                        if marble8_hit == true then
+                                            marble8x-=speed
+                                            marble8y-=speed
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
 		end
 	end
 end
@@ -945,50 +594,30 @@ function draw_minigame()
 
 	--print marbles
 	spr(marble_sprite, marblex, marbley, marble_width, marble_height)
-	if(level==1) then 
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-	elseif(level==2) then 
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-	elseif(level==3) then
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
-	elseif(level==4) then
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
-		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
-	elseif(level==5) then
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
-		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
-		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
-	elseif(level==6) then
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
-		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
-		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
-		spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
-	elseif(level==7) then
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
-		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
-		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
-		spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
-        spr(marble8_sprite, marble8x, marble8y, marble_width, marble_height)
-    elseif(level==8) then
-		spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
-		spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
-		spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
-		spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
-		spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
-		spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
-		spr(marble8_sprite, marble8x, marble8y, marble_width, marble_height)
-	end
+	if(level>=1) then 
+        spr(marble2_sprite, marble2x, marble2y, marble_width, marble_height)
+        if(level>=2) then 
+            spr(marble3_sprite, marble3x, marble3y, marble_width, marble_height)
+            if(level>=3) then
+                spr(marble4_sprite, marble4x, marble4y, marble_width, marble_height)
+                if(level>=4) then
+                    spr(marble5_sprite, marble5x, marble5y, marble_width, marble_height)
+                    if(level>=5) then
+                        spr(marble6_sprite, marble6x, marble6y, marble_width, marble_height)
+                        if(level>=6) then
+                            spr(marble7_sprite, marble7x, marble7y, marble_width, marble_height)
+                            if(level>=7) then
+                                spr(marble8_sprite, marble8x, marble8y, marble_width, marble_height)
+                                if(level>=8) then
+                                    --anything special?
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 
 	--check win condition
 	if(level==1) then 
@@ -1059,8 +688,8 @@ function logo_draw()
     cls()
     sspr((logo*16), 0, 16, 16, logo_x, logo_y, 32, 32)
     print("korok kidz presents...",25,70,3)
-    print("kool kid'z", 30, 80, 8)
-    print("marble-ous adventure!",20,90,11)
+    print("kool kid'z", 45, 80, 8)
+    print("marble-ous adventure!",25,90,11)
 end
 
 --menu state
@@ -1116,6 +745,7 @@ function menu_draw()
     state="menu"
     cls()
     map(16, 0, 0, 0, 128, 32)
+    if win_marble==true then map(16, 0, 0, 0, 128, 32) win_marble=false end --TODO add post-game map for menu
     --print froggo
     sspr((frog_sprite*8), 0, 8, 8, frog_x, frog_y, 8, 8)
 	if selected == 0 then
@@ -1350,7 +980,7 @@ end
 -->8
 --dialog
 
---bellow needed for dialog found on laxofelle: FIND LINK AGAIN --
+--bellow needed for dialog found on lexaloffle: https://www.lexaloffle.com/bbs/?pid=35126 --
 
 -- call this before you start using dtb.
 -- optional parameter is the number of lines that are displayed. default is 3.
