@@ -23,20 +23,21 @@ function _init()
     playground_marble=false
     library_marble=false
     win=false
-    level=1
+    level=1 --for minigame
+
+    intro=true
 
     --pre-initialize
     dtb_init()
-    minigame_init()
     --first state
     logo_init()
 end
 
 --state handling
 function _update()
+    dtb_update()
     if state=="logo" then logo_update()
     elseif state=="menu" then menu_update()
-    elseif state=="dialog" then dtb_update()
     elseif state=="minigame" then update_minigame()
 	else game_update() end
 end
@@ -44,7 +45,6 @@ end
 function _draw()
     if state=="logo" then logo_draw()
     elseif state=="menu" then menu_draw()
-    elseif state=="dialog" then dtb_draw()
     elseif state=="minigame" then draw_minigame()
 	else game_draw() end
 end
@@ -67,8 +67,8 @@ function game_init()
     door_bottom1_border={0,127,60,127}
     door_bottom2_border={80,127,127, 127}
 
-	npc1={60,62,69,69}
-	dialog_npc1={57,59,72,72}
+	froggo={60,62,69,69}
+	dialog_froggo={57,59,72,72}
 
     --set state
     update=game_update()
@@ -78,35 +78,72 @@ end
 
 function game_update()
 	state="game"
-	dialog_cooldown = dialog_cooldown - 1
+    if(dialog_cooldown >= 0) then dialog_cooldown = dialog_cooldown - 1 end
     move()
     map_update()
-	--collide with npc1
-	if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   npc1[1],npc1[2],npc1[3],npc1[4] )
-	then
-	 	 blocked()
-	end
-	--in npc dialog box
-	if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_npc1[1],dialog_npc1[2],dialog_npc1[3],dialog_npc1[4] )
-	then
-	  if btn(4) and (dialog_cooldown <= 0) then 
-	    state="dialog"
-	    dtb_disp("ribbit ribbit")
-        dialog_cooldown=5
-        if(map_state=="backyard") backyard_marble=true
-        if(map_state=="house") house_marble=true
-        if(map_state=="townsquare") townsquare_marble=true
-        if(map_state=="junkyard") junkyard_marble=true
-        if(map_state=="school") school_marble=true
-        if(map_state=="playground") playground_marble=true
-        if(map_state=="library") library_marble=true
 
-      end
-      if btn(5) and (dialog_cooldown <= 0) then 
-	    state="minigame"
-	  end
+    if(map_state=="backyard") then 
+        if(intro==true and (dialog_cooldown <= 0) ) then
+            dtb_disp("oh hello there! help me find my marbles? maybe sir froggo knows. click 'z' near him to talk to him.")
+            dialog_cooldown=5
+            intro=false
+        end
+        --collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in froggo dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+                
+            if btn(4) and (dialog_cooldown <= 0) and backyard_marble==false then 
+                dtb_disp("Oh hey i have one of your marbles! but youll have to play me for it. press 'x' to start the game")
+                dialog_cooldown=200 --TODO coolddown is werid but necesary so dialog doesnt loop?
+            end
+
+            if btn(5) and backyard_marble==false then 
+                level=1
+                minigame_init()
+            end
+
+            if btn(4) and (dialog_cooldown <= 0) and backyard_marble==true then
+                dtb_disp("nooo you got me, take good care of that preciouds marble")
+                dialog_cooldown=50
+            end
+        end
+    elseif(map_state=="house") then
+        --collide with froggo
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+        then
+            blocked()
+        end
+        --in npc dialog box
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("hello welcome home")
+                dialog_cooldown=50
+            end
+            if btn(5) and house_marble==false then 
+                level=2
+                minigame_init()
+            end
+        end
+    elseif(map_state=="townsquare") then
+
+    elseif(map_state=="junkyard")then
+
+    elseif(map_state=="school") then
+
+    elseif(map_state=="playground") then
+
+    elseif(map_state=="library") then
+
+    elseif(map_state=="beach") then
+
     end
-    
+
+	
+    --check for win condition
     if( backyard_marble==true and 
         house_marble==true and
         townsquare_marble==true and
@@ -122,16 +159,60 @@ end
 function game_draw()
 	state="game"
     cls()
+
     draw_map()
     sspr((kid_sprite*8), 0, 16, 16, player_x, player_y, 16, 16)
 
 	--rect(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],1)
+	--rect(froggo[1],froggo[2],froggo[3],froggo[4],6)
+    --rect(dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4],7)
 
-	--rect(npc1[1],npc1[2],npc1[3],npc1[4],6)
-	--rect(dialog_npc1[1],dialog_npc1[2],dialog_npc1[3],dialog_npc1[4],7)
-    sspr((frog_sprite*8), 0, 8, 8, npc1[1], npc1[2], 8, 8)
+    if(map_state=="backyard") then
+        sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
+    elseif(map_state=="house") then
+        sspr((frog_sprite*8), 0, 8, 8, froggo[1], froggo[2], 8, 8)
+    elseif(map_state=="townsquare") then
+
+    elseif(map_state=="junkyard")then
+
+    elseif(map_state=="school") then
+
+    elseif(map_state=="playground") then
+
+    elseif(map_state=="library") then
+
+    elseif(map_state=="beach") then
+
+    end
+
+
+
+    --display collected marbles
+    spr(56, 72, 0, 1, 1)
+    spr(56, 80, 0, 1, 1)
+    spr(56, 88, 0, 1, 1)
+    spr(56, 96, 0, 1, 1)
+    spr(56, 104, 0, 1, 1)
+    spr(56, 112, 0, 1, 1)
+    spr(56, 120, 0, 1, 1)
+
+    --draws over empty circle if collected
+    if (backyard_marble==true) spr(49, 72, 0, 1, 1)
+    if (house_marble==true) spr(50, 80, 0, 1, 1)
+    if (townsquare_marble==true) spr(51, 88, 0, 1, 1)
+    if (junkyard_marble==true) spr(52, 96, 0, 1, 1)
+    if (school_marble==true) spr(53, 104, 0, 1, 1)
+    if (playground_marble==true) spr(54, 112, 0, 1, 1)
+    if (library_marble==true) spr(55, 120, 0, 1, 1)
+
+    
     if(win==true) then print("Lets go to the beach!!!", 20, 25) end
 
+    --debug
+    print(dialog_cooldown, 10, 10, 10)
+
+    --draw dialog
+    dtb_draw()
 end
 
 function draw_map()
@@ -164,7 +245,7 @@ function minigame_init()
     pointery1 = scr_h
     pointerx2 = scr_w/2
     pointery2 = scr_h - 10
-    marble_sprite=38
+    marble_sprite=48
     marblex = scr_w/2 - 3
     marbley = scr_h - 4
     marble_hitbox={marblex, marbley, marblex + 7, marbley + 7}
@@ -299,7 +380,7 @@ end
 
 function draw_minigame()
     state="minigame"
-	cls()
+    cls()
     print("press 'z' to aim", 33, 90, 10)
     print("press 'x' to fire!", 30, 100, 10)
 	map(64,0,0,0,128,32)
@@ -337,9 +418,9 @@ function draw_minigame()
 
 	--check win condition
 	if(level==1) then 
-		if(marble2_hit == true and marbley > 100 ) then state="game" end
+		if(marble2_hit == true and marbley > 100 ) then backyard_marble=true state="game" end
 	elseif(level==2) then 
-		if(marble2_hit == true and marble3_hit == true and marbley > 100 ) then state="game" end
+		if(marble2_hit == true and marble3_hit == true and marbley > 100 ) then house_marble=true state="game" end
 	elseif(level==3) then
 
 	elseif(level==4) then
@@ -362,7 +443,8 @@ function main_marble_mover()
 		drawPower=false
 		shoot=false 
 		select=false
-		moving=true
+        moving=true
+        speed=2
 		marblex=pointerx1 - 3 
 		marbley=pointery1 - 4 
 		marble_hitbox[1] = marblex
@@ -848,22 +930,22 @@ __gfx__
 03333333333c003003333333333c003003333333333c003000000011110000001100000000000011ff5ff5ff636363633333633344999944cccccccc23551669
 00333333333330000033333333333000003333333333300000000010010000000000000000000000ffffffff363636363336d53344499444cccccccc23551669
 00033300003333000003330000333300000333000033330000000000000000000000000000000000fffffff5636363633336d53344444444cccccccc23551669
-00cccc000088880000bbbb000099990000ffff00001111000011110000000000000000000000000000666dd06666666666666666666666662222222211111111
-0c1111c0082222800b3333b009aaaa900f7777f001cccc1001c9c910000000000000000000000000066ddddd6666666666666666666666662222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc11c9c9c9100000000000000000000000066dddddd6666666666666666444444442222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc119c9c9c1000000000000000000000000666ddddd6666666665888856444444442222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc11c9c9c91000000000000000000000000dddddd556666666666888866444444442222222211111111
-c111111c82222228b333333b9aaaaaa9f777777f1cccccc119c9c9c1000000000000000000000000dddddd556666666666888866444444442222222211111111
-0c1111c0082222800b3333b009aaaa900f7777f001cccc10019c9c100000000000000000000000000d5d55556666666665888856444444442222222211111111
-00cccc000088880000bbbb000099990000ffff000011110000111100000000000000000000000000005555006666666666666666444444442222222211111111
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000444444440000000033333b3333b6555665556b33
-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044444444000000003b3333b33b665656656565b3
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004444444400000000bbb55b6633b5565565656b33
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004444444400000000555555553355555665656533
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004444444400000000666666553356565655555b33
-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044444444000000005555555533b65655556565b3
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004444444400000000566556663b65565665656b33
-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044444444000000005555555533b5565665556533
+00cccc000088880000bbbb000099990000ffff00001111000000000000000000000000000000000000666dd06666666666666666666666662222222211111111
+0c1111c0082222800b3333b009aaaa900f7777f001cccc1000000000000000000000000000000000066ddddd6666666666666666666666662222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc10000000000000000000000000000000066dddddd6666666666666666444444442222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc100000000000000000000000000000000666ddddd6666666665888856444444442222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc100000000000000000000000000000000dddddd556666666666888866444444442222222211111111
+c111111c82222228b333333b9aaaaaa9f777777f1cccccc100000000000000000000000000000000dddddd556666666666888866444444442222222211111111
+0c1111c0082222800b3333b009aaaa900f7777f001cccc10000000000000000000000000000000000d5d55556666666665888856444444442222222211111111
+00cccc000088880000bbbb000099990000ffff000011110000000000000000000000000000000000005555006666666666666666444444442222222211111111
+001111000088880000bbbb000099990000ffff0000cccc000044440000777700006666000000000000000000444444440000000033333b3333b6555665556b33
+01234510082222800b3333b009aaaa900f7777f00c1911c0049999400700007006777760000000000000000044444444000000003b3333b33b665656656565b3
+16789ab182e22228b331a33b9aaa4aa9f77dd77fc191911c40909094707777076777777600000000000000004444444400000000bbb55b6633b5565565656b33
+1cdef231822ee228b33a133b94aaa4a9f7d99d7fc919191c49090904707887076777777600000000000000004444444400000000555555553355555665656533
+14567891822ee228b331a33b9a4aaa49f7d99d7fc191919c40909094707887076777777600000000000000004444444400000000666666553356565655555b33
+1abcdef182222e28b33a133b9aa4aaa9f77dd77fc119191c490909047077770767777776000000000000000044444444000000005555555533b65655556565b3
+01234510082222800b3333b009aaaa900f7777f00c1191c004999940070000700677776000000000000000004444444400000000566556663b65565665656b33
+001111000088880000bbbb000099990000ffff0000cccc00004444000077770000666600000000000000000044444444000000005555555533b5565665556533
 __label__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
