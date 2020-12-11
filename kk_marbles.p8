@@ -13,9 +13,18 @@ function _init()
     player_y=20
     speed=2
     kid_sprite=65
-	mom_sprite=134
     kid_animation=0
+    --sprite no hawaiian shirt
+    upa = {100, 75, 100}
+    downa = {65, 96, 65}
+    lefta = {-98, -73, -98}
+    righta = {71, 69, 71}    
+    petaa = {67, 104, 106}
+    mom_sprite=134
+    shirt_sprite=228
+    c_shirt=false
     frog_sprite=80
+
     mid_1=44 --for walls/entries
     mid_2=84 --for walls/entries
     dialog_cooldown=0
@@ -33,6 +42,7 @@ function _init()
     count=1 --for animations
 
     intro=true
+    pet=false
 
     --pre-initialize
     dtb_init()
@@ -61,11 +71,38 @@ end
 --gameplay 
 function game_init()
 	state="game"
-	--hitboxes
-	player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15} -- adjusted for sprite
-	mom_hitbox={mom_x+4, mom_y+3, mom_x+11, mom_y+15}
-	mom_dialog={mom_x+2, mom_y+1, mom_x+13, mom_y+17}
-	top_border={0,0,127,0}
+	--hitboxes/.characters
+    player_hitbox={player_x+4, player_y+3, player_x+11, player_y+15} -- adjusted for sprite
+    mom_x=90
+	mom_y=30
+    mom_hitbox={mom_x+4, mom_y+3, mom_x+11, mom_y+15}
+    mom_dialog={mom_x+2, mom_y+1, mom_x+13, mom_y+17}
+    froggo_x=60
+    froggo_y=62
+    froggo={froggo_x,froggo_y,froggo_x+9,froggo_y+7}
+    dialog_froggo={froggo_x-3,froggo_y-3,froggo_x+12,froggo_y+10}
+    shirt_x=10
+    shirt_y=80
+    shirt_hitbox={shirt_x, shirt_y, shirt_x+8, shirt_y+8}
+
+    --doggos
+    corgi_sprite=128
+    corgi_x=13
+    corgi_y=23
+    corgi_hitbox = {corgi_x+4, corgi_y+3, corgi_x+11, corgi_y+15}
+
+    poodle_sprite=130
+    poodle_x=20
+    poodle_y=20
+    poodle_hitbox = {poodle_x+4, poodle_y+3, poodle_x+11, poodle_y+15}
+
+    lab_sprite=132
+    lab_x=30
+    lab_y=30
+    lab_hitbox = {lab_x+4, lab_y+3, lab_x+11, lab_y+15}
+
+    --WALLS
+    top_border={0,0,127,0}
 	left_border={0,0,0,127}
 	right_border={127,0,127,127}
     bottom_border={0,127,127,127}
@@ -78,9 +115,6 @@ function game_init()
     door_bottom1_border={0,127,mid_1+5,127}
     door_bottom2_border={mid_2-5,127,127,127}
 
-	froggo={60,62,69,69}
-    dialog_froggo={57,59,72,72}
-
     --set state
     update=game_update()
     draw=game_draw()
@@ -90,13 +124,22 @@ end
 function game_update()
 	state="game"
     if(dialog_cooldown >= 0) then dialog_cooldown = dialog_cooldown - 1 end
-    move()
+    if pet==true then
+        dontmove()
+        kid_sprite=petaa[count]
+        flip_y=false
+        if (time() - kid_animation) > 0.45 then count+=1 kid_animation=time() end
+        if count>=4 then count=1 pet=false end
+    else
+        move()
+    end
+
     map_update()
-		
 
     if(map_state=="backyard") then 
+        set_froggo(60, 62)
         if(intro==true and (dialog_cooldown <= 0) ) then
-            dtb_disp("oh hello there! help me find my marbles? maybe sir froggo knows. click 'z' near him to talk to him.")
+            dtb_disp("oh hello there! I wanna play marbles with my friends at the beach, but i lost my marbles! help me find them? maybe sir froggo knows. click 'z' near him to talk to him.")
             intro=false
         end
         --collide with froggo
@@ -123,7 +166,8 @@ function game_update()
             end
         end
     elseif(map_state=="house") then
-		--collide with mom
+
+        --collide with mom
 		if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   mom_hitbox[1],mom_hitbox[2],mom_hitbox[3],mom_hitbox[4] )
         then
             blocked()
@@ -132,52 +176,82 @@ function game_update()
 		if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   mom_dialog[1],mom_dialog[2],mom_dialog[3],mom_dialog[4] ) then
             if btn(4) and (dialog_cooldown <= 0) then 
 				blocked()
-                if level==1 then
-					dtb_disp("hi kiddo, this frog here has a marble i think")
+                if house_marble==false then
+					dtb_disp("hi kiddo, did you look under your shirt?")
 					dialog_cooldown=100
-				end
-				if level==2 then
-					dtb_disp("i think someone saw a frog with a marble in the middle of town")
+				elseif townsquare_marble==false then
+					dtb_disp("i think someone saw a frog with a marble in town")
 					dialog_cooldown=100
-				end
-				if level==3 then
+				elseif junkyard_marble==false then
 					dtb_disp("the grumpy frog at the junkyard loves shiny things")
 					dialog_cooldown=100
-				end
-				if level==4 then
+				elseif school_marble==false then
 					dtb_disp("maybe you left one of your marbles at school")
 					dialog_cooldown=100
-				end
-				if level==5 then
+				elseif playground_marble==false then
 					dtb_disp("you may lose a marble if you play with them at the playground")
 					dialog_cooldown=100
-				end
-				if level==6 then
+				elseif library_marble==false then
 					dtb_disp("marbles is too noisy of a game for the library")
-					dialog_cooldown=100
+                    dialog_cooldown=100
+                else
+					dtb_disp("love you honey!")
+                    dialog_cooldown=100      
 				end
             end
 		end
-		
-	
-	
-        --collide with froggo
-        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
+
+        --collide with shirt
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   shirt_hitbox[1],shirt_hitbox[2],shirt_hitbox[3],shirt_hitbox[4] )
         then
-            blocked()
-        end
-        --in npc dialog box
-        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   dialog_froggo[1],dialog_froggo[2],dialog_froggo[3],dialog_froggo[4] ) then
-            if btn(4) and (dialog_cooldown <= 0) then 
-                dtb_disp("hello welcome home")
-                dialog_cooldown=100
-            end
-            if btn(5) and house_marble==false and level==1 then 
+            if btn(5) and house_marble==false then
+                c_shirt=true
+                shirt_hitbox = {-1,-1,-1,-1}
+                --sprite with hawaiian shirt
+                upa = {202, 226, 202}
+                downa = {192, 206, 192}
+                lefta = {-224, -200, -224}
+                righta = {198, 196, 198}
+                petaa={194, 229, 231}
                 level=2
                 minigame_init()
             end
         end
+
     elseif(map_state=="townsquare") then
+        set_froggo(20, 100)
+        set_corgi(17, 23)
+        set_poodle(88, 20)
+        set_lab(88, 100)
+
+        --collide with corgi
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   corgi_hitbox[1],corgi_hitbox[2],corgi_hitbox[3],corgi_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("woof woof!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
+        --collide with poodle
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   poodle_hitbox[1],poodle_hitbox[2],poodle_hitbox[3],poodle_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("bark bark!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
+        --collide with lab
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   lab_hitbox[1],lab_hitbox[2],lab_hitbox[3],lab_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("arf arf!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
+
 		--collide with froggo
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
         then
@@ -189,12 +263,24 @@ function game_update()
                 dtb_disp("this is the town square!")
                 dialog_cooldown=100
             end
-            if btn(5) and townsquare_marble==false and level==2 then 
+            if btn(5) and townsquare_marble==false then 
                 level=3
                 minigame_init()
             end
         end
     elseif(map_state=="junkyard")then
+        set_froggo(60, 62)
+        set_lab(88, 88)
+
+        --collide with lab
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   lab_hitbox[1],lab_hitbox[2],lab_hitbox[3],lab_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("arf arf!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
 		--collide with froggo
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
         then
@@ -206,12 +292,13 @@ function game_update()
                 dtb_disp("this is my junkyard >:c")
                 dialog_cooldown=100
             end
-            if btn(5) and junkyard_marble==false and level==3 then 
+            if btn(5) and junkyard_marble==false then  
                 level=4
                 minigame_init()
             end
         end
     elseif(map_state=="school") then
+        set_froggo(88, 100)
 		--collide with froggo
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
         then
@@ -223,12 +310,25 @@ function game_update()
                 dtb_disp("school is cool")
                 dialog_cooldown=100
             end
-            if btn(5) and school_marble==false and level==4 then 
+            if btn(5) and school_marble==false  then 
                 level=5
                 minigame_init()
             end
         end
     elseif(map_state=="playground") then
+        set_froggo(60, 62)
+        set_poodle(30, 60)
+
+        --collide with poodle
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   poodle_hitbox[1],poodle_hitbox[2],poodle_hitbox[3],poodle_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("bark bark!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
+
 		--collide with froggo
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
         then
@@ -240,12 +340,13 @@ function game_update()
                 dtb_disp("remember to take breaks and get some sunshine")
                 dialog_cooldown=100
             end
-            if btn(5) and playground_marble==false and level==5 then 
+            if btn(5) and playground_marble==false then 
                 level=6
                 minigame_init()
             end
         end
     elseif(map_state=="library") then
+        set_froggo(40, 23)
 		--collide with froggo
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
         then
@@ -257,12 +358,43 @@ function game_update()
                 dtb_disp("support your local library")
                 dialog_cooldown=100
             end
-            if btn(5) and library_marble==false and level==6 then 
+            if btn(5) and library_marble==false then
                 level=7
                 minigame_init()
             end
         end
     elseif(map_state=="beach") then
+        set_froggo(60, 62)
+        set_corgi(90, 80)
+        set_poodle(77, 100)
+        set_lab(19, 81)
+        --collide with corgi
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   corgi_hitbox[1],corgi_hitbox[2],corgi_hitbox[3],corgi_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("woof woof!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
+        --collide with poodle
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   poodle_hitbox[1],poodle_hitbox[2],poodle_hitbox[3],poodle_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("bark bark!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
+        --collide with lab
+        if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   lab_hitbox[1],lab_hitbox[2],lab_hitbox[3],lab_hitbox[4] )
+        then
+            if btn(4) and (dialog_cooldown <= 0) then 
+                dtb_disp("arf arf!")
+                dialog_cooldown=100
+            end
+            blocked()
+        end
 		--collide with froggo
         if hitbox_collide(player_hitbox[1],player_hitbox[2],player_hitbox[3],player_hitbox[4],   froggo[1],froggo[2],froggo[3],froggo[4] )
         then
@@ -296,7 +428,6 @@ function game_update()
 end
 
 
-
 function game_draw()
 	state="game"
     cls()
@@ -313,20 +444,28 @@ function game_draw()
     if(map_state=="backyard") then
         spr(frog_sprite, froggo[1], froggo[2], 1, 1)
     elseif(map_state=="house") then
-        spr(frog_sprite, froggo[1], froggo[2], 1, 1)
-		spr(mom_sprite, mom_x, mom_y, 2, 2, flip_y, false)
+        spr(mom_sprite, mom_x, mom_y, 2, 2)
+        if c_shirt==false then spr(shirt_sprite, shirt_x, shirt_y, 1, 1) end
     elseif(map_state=="townsquare") then
-		spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(corgi_sprite, corgi_hitbox[1], corgi_hitbox[2], 2, 2, true, false)
+        spr(poodle_sprite, poodle_hitbox[1], poodle_hitbox[2], 2, 2)
+        spr(lab_sprite, lab_hitbox[1], lab_hitbox[2], 2, 2)
     elseif(map_state=="junkyard")then
-		spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(lab_sprite, lab_hitbox[1], lab_hitbox[2], 2, 2)
     elseif(map_state=="school") then
-		spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+		spr(frog_sprite, froggo[1], froggo[2], 1, 1, true, false)
     elseif(map_state=="playground") then
-		spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(poodle_sprite, poodle_hitbox[1], poodle_hitbox[2], 2, 2)
     elseif(map_state=="library") then
 		spr(frog_sprite, froggo[1], froggo[2], 1, 1)
     elseif(map_state=="beach") then
         spr(frog_sprite, froggo[1], froggo[2], 1, 1)
+        spr(corgi_sprite, corgi_hitbox[1], corgi_hitbox[2], 2, 2)
+        spr(poodle_sprite, poodle_hitbox[1], poodle_hitbox[2], 2, 2)
+        spr(lab_sprite, lab_hitbox[1], lab_hitbox[2], 2, 2, true, false)
     end
 
 
@@ -751,8 +890,7 @@ function menu_init()
     input=0
     frog_x=0
     frog_y=70
-	mom_x=90
-	mom_y=30
+    inst=false
     --handle state
     state="menu"
     update=menu_update()
@@ -778,7 +916,7 @@ function menu_update()
 		if(selected == 0) then
             game_init()
         elseif(selected == 1) then 
-            --TODO diplay instructions
+            inst=true
 		elseif(selected == 2) then
 			cls()
 			extcmd('shutdown')
@@ -796,27 +934,44 @@ end
 function menu_draw()
     state="menu"
     cls()
-    map(16, 0, 0, 0, 128, 32)
-    if win_marble==true then map(16, 0, 0, 0, 128, 32) win_marble=false end --TODO add post-game map for menu
-    --print froggo
-    spr(frog_sprite,frog_x, frog_y, 1, 1)
-	if selected == 0 then
-		print(options[1],50,45,12)
-	else
-		print(options[1],50,45,0)
-	end
-	
-	if selected == 1 then
-		print(options[2],50,55,12)
-	else
-		print(options[2],50,55,0)
+    if(inst==true) then
+        map(96, 0, 0, 0, 128, 32)
+        col=7
+        print("hello!", 0, 0, col)
+        print("press 'z' to speak with beings", 0, 10, col)
+        print("press 'x' to pickup,interact,", 0, 20, col)
+        print("or start minigame", 0, 30, col)
+        print("press 'down' + 'x' to pet! ", 0, 40, col)
+        print("and arrow keys for movement", 0, 50, col)
+        print("if youre stuck, ask your mom", 0, 60, col)
+        print("that's it! have a blast.", 0, 70, col)
+
+        print("press 'x' to go back to menu", 10, 110, col)
+        if btn(5) then inst=false end
+    else
+        map(16, 0, 0, 0, 128, 32)
+        if win_marble==true then map(16, 0, 0, 0, 128, 32) win_marble=false end --TODO add post-game map for menu
+        --print froggo
+        spr(frog_sprite,frog_x, frog_y, 1, 1)
+        if selected == 0 then
+            print(options[1],50,45,12)
+        else
+            print(options[1],50,45,0)
+        end
+        
+        if selected == 1 then
+            print(options[2],50,55,12)
+        else
+            print(options[2],50,55,0)
+        end
+        
+        if selected == 2 then
+            print(options[3],50,65,12)
+        else
+            print(options[3],50,65,0)
+        end
     end
-    
-    if selected == 2 then
-		print(options[3],50,65,12)
-	else
-		print(options[3],50,65,0)
-	end
+
 end
 
 
@@ -845,12 +1000,17 @@ function hitbox_collide(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2)
       if btn(2) then player_y=player_y+speed end
       if btn(3) then player_y=player_y-speed end
   end
+
+function dontmove()
+    player_hitbox[2]=player_hitbox[2] 
+    player_hitbox[4]=player_hitbox[4]
+    player_hitbox[1]=player_hitbox[1]
+    player_hitbox[3]=player_hitbox[3]
+    player_x=player_x
+    player_y=player_y
+end
   
 function move()
-    up = {100, 75, 100}
-    down = {65, 96, 65}
-    left = {-98, -73, -98}
-    right = {71, 69, 71}
     framerate = 0.05
     flip_y=false
     --hitbox
@@ -860,48 +1020,51 @@ function move()
     if btn(1) then player_hitbox[1]+=speed player_hitbox[3]+=speed end --right
     --player
     if btn(0) then player_x=player_x-speed --left
-        if left[count] < 0 then
-            kid_sprite=abs(left[count])
+        if lefta[count] < 0 then
+            kid_sprite=abs(lefta[count])
             flip_y=true
         else
-            kid_sprite=left[count]
+            kid_sprite=lefta[count]
             flip_y=false
         end
         if (time() - kid_animation) > framerate then count+=1 kid_animation=time() end
-        if count>=#left then count=1 end
+        if count>=4 then count=1 end
     end
     if btn(1) then player_x=player_x+speed --right
-        if right[count] < 0 then
-            kid_sprite=abs(right[count])
+        if righta[count] < 0 then
+            kid_sprite=abs(righta[count])
             flip_y=true
         else
-            kid_sprite=right[count]
+            kid_sprite=righta[count]
             flip_y=false
         end
         if (time() - kid_animation) > framerate then count+=1 kid_animation=time() end
-        if count>=#right then count=1 end
+        if count>=4 then count=1 end
     end
     if btn(2) then player_y=player_y-speed --up
-        if up[count] < 0 then
-            kid_sprite=abs(up[count])
+        if upa[count] < 0 then
+            kid_sprite=abs(upa[count])
             flip_y=true
         else
-            kid_sprite=up[count]
+            kid_sprite=upa[count]
             flip_y=false
         end
         if (time() - kid_animation) > framerate then count+=1 kid_animation=time() end
-        if count>=#up then count=1 end
+        if count>=4 then count=1 end
     end
     if btn(3) then player_y=player_y+speed --down
-        if down[count] < 0 then
-            kid_sprite=abs(down[count])
+        if downa[count] < 0 then
+            kid_sprite=abs(downa[count])
             flip_y=true
         else
-            kid_sprite=down[count]
+            kid_sprite=downa[count]
             flip_y=false
         end
         if (time() - kid_animation) > framerate then count+=1 kid_animation=time() end
-        if count>=#down then count=1 end
+        if count>=4 then count=1 end
+    end
+    if btn(5) and btn(3) then
+        pet = true
     end
 end
 
@@ -962,6 +1125,32 @@ function wallLeft()
         blocked()
     end
 end
+
+function set_froggo(x, y)
+    froggo_x=x
+    froggo_y=y
+    froggo={froggo_x,froggo_y,froggo_x+9,froggo_y+7}
+    dialog_froggo={froggo_x-3,froggo_y-3,froggo_x+12,froggo_y+10}
+end
+
+function set_corgi(x, y)
+    corgi_x=x
+    corgi_y=y
+    corgi_hitbox = {corgi_x+4, corgi_y+3, corgi_x+11, corgi_y+15}
+end
+
+function set_poodle(x, y)
+    poodle_x=x
+    poodle_y=y
+    poodle_hitbox = {poodle_x+4, poodle_y+3, poodle_x+11, poodle_y+15}
+end
+
+function set_lab(x, y)
+    lab_x=x
+    lab_y=y
+    lab_hitbox = {lab_x+4, lab_y+3, lab_x+11, lab_y+15}
+end
+
 
 --game helpers
 function map_update()
@@ -1292,46 +1481,46 @@ cccccccc00144444444aa10000144444444aa1000001444444444100000144444444410000014444
 18eeeee100011f1ff1f1100000011f1ff1f11000000144144ff14100000144144ff14100000144144ff141000001444444441000000144444444100000000000
 18eeeee100001f1ff1f1000000001f1ff1f1000000014141f1f1100000014141f1f1100000014141f1f110000000144444441000000014444444100000000000
 18eeeee1000151ffff151000000011ffff110000000011fff1f10000000011fff1f10000000011fff1f100000000114144111000000011414411000000000000
-00000000001ff511115ff10000015511115510000000001fff1000000000001fff1000000000001fff1000000011f5111155f110000155111155100000000000
-00000a3a01ff15555551ff10001f55555555f10000000151111100000000015111000000000001511111000001ff155555551ff10001f5555555f10000000000
-00bb333300111cc555511100001f55555555f10000001155f1ff1000000001f55510000000001155f1ff100001ff1c5555551ff10001f5555555f10000000000
-0b33737700001cccccc1000001ff1c5555c1ff100001f155ffff1000000001ff551000000001f155ffff100000111ccccccc1110001ffc55555cff1000000000
-0337737000001ccc1cc1000001ff1cccccc1ff100001f155111100000000015ff51000000001f1551111000000001ccccccc1000001ffcccccccff1000000000
-0377737000001cc11110000000111cc11cc11100000011ccc1000000000001cff1000000000011ccc100000000001ccc1ccc100000011ccc1ccc110000000000
-333733300000144100000000000014444441000000014ccccc100000000001cc1000000000014ccccc100000000001111cc10000000011cc1cc1100000000000
-00000000000001100000000000000111111000000001441144410000000001444100000000014411444100000000000014410000000001441441000000000000
-00011101111000000000000011100000000000111411100000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0014441444a100000000011144410000000011444aa4410000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00014444444a10000000144444aa10000001444744aa100000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00144444444aa100000144444aa44100001447447444a10000000000000000000000000000000000000000000000000000000000000000000000444444440000
-001444fff444a10000001444aa44410000144444444441000000000000000000000000000000000000000000000000000000000000000000000044f44f440000
-00011f1ff1f11000000144144ff141000001444444441000000000000000000000000000000000000000000000000000000000000000000000004ffffff40000
-00001f1ff1f1000000014141f1f110000000144444441000000000000000000000000000000000000000000000000000000000000000000000004f1ff1f40000
-000151ffff151000000011fff1f100000000114144111000000000000000000000000000000000000000000000000000000000000000000000004effffe40000
-001ff511115ff1000000001fff1000000011f5111155f11000000000000000000000000000000000000000000000000000000000000000000000400ff0040000
-01ff15555511ff10000001511100000001ff155555551ff100000000000000000000000000000000000000000000000000000000000000000000055555500000
-001115555cc11100000001f55510000001ff1c5555551ff100000000000000000000000000000000000000000000000000000000000000000000055557500000
-00001cccccc10000000001ff5510000000111ccccccc1110000000000000000000000000000000000000000000000000000000000000000000000f5557f00000
-00001ccc1cc100000000015ff510000000001ccccccc10000000000000000000000000000000000000000000000000000000000000000000000000cccc000000
-000011111cc10000000001cff100000000001ccc1ccc100000000000000000000000000000000000000000000000000000000000000000000000001111000000
-0000000014410000000001cc10000000000001cc1111000000000000000000000000000000000000000000000000000000000000000000000000001001000000
-00000000011000000000014441000000000001441000000000000000000000000000000000000000000000000000000000000000000000000000001001000000
-00000000000000000000000000000000000000000000000000011101111000000000000000000000000000000000000000000000000000000000000000000000
-090009f0000090000660006600000000000000000000000000144414444100000000000000000000000000000000000000000000000000000000000000000000
-9f909f90000099006667776660000000000000000000000000014444444410000000000000000000000000000000000000000000000000000000000000000000
-99999990000099906677776660066000099ffff99000000000144444444441000000000000000000000000000000000000000000000000000000000000000000
-0909099000000990660707666006670009ffffff90000000001444fff44441000000000000000000000000000000000000000000000000000000000000000000
-0ff0ff4444444490667077666000070099f0f0ff9900000000141f1ff1f141000000000000000000000000000000000000000000000000000000000000000000
-0fffff4444449990666777666000070099ff0fff9900000001441f1ff1f144100000000000000000000000000000000000000000000000000000000000000000
-00cacc9999999ff0066a886677777000999ffff999000000144411ffff1144410000000000000000000000000000000000000000000000000000000000000000
-00fffffffffffff000077777777770000003a330000000000111ee1111ee11100000000000000000000000000000000000000000000000000000000000000000
-099fff000099fff00007777777777000000fffff00000000001feeeeeeeef1000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000777777770000000ffffff0000f00001feeeeeeeef1000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000607006700000000f9fff9ff00f0001ff1ceeeec1ff100000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000707006700000000f9ff9fff0ff0001ff1cccccc1ff100000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000070700670000000ff9f9ffffff00000111cc11cc111000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000707005700000000000000000000000001444444100000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000006566056600000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000000
+00000111001ff511115ff10000015511115510000000001fff1000000000001fff1000000000001fff1000000011f5111155f110000155111155100000000000
+00111a3a01ff15555551ff10001f55555555f10000000151111100000000015111000000000001511111000001ff155555551ff10001f5555555f10000000000
+01bb333300111cc555511100001f55555555f10000001155f1ff1000000001f55510000000001155f1ff100001ff1c5555551ff10001f5555555f10000000000
+1b33737700001cccccc1000001ff1c5555c1ff100001f155ffff1000000001ff551000000001f155ffff100000111ccccccc1110001ffc55555cff1000000000
+1337737100001ccc1cc1000001ff1cccccc1ff100001f155111100000000015ff51000000001f1551111000000001ccccccc1000001ffcccccccff1000000000
+1377737100001cc11110000000111cc11cc11100000011ccc1000000000001cff1000000000011ccc100000000001ccc1ccc100000011ccc1ccc110000000000
+333733310000144100000000000014444441000000014ccccc100000000001cc1000000000014ccccc100000000001111cc10000000011cc1cc1100000000000
+11111110000001100000000000000111111000000001441144410000000001444100000000014411444100000000000014410000000001441441000000000000
+00011101111000000000000011100000000000111411100000011101111000000001110111100000000111011110000000000000000000000000000000000000
+0014441444a100000000011144410000000011444aa441000014441444a100000014441444a100000014441444a1000000000000000000000000000000000000
+00014444444a10000000144444aa10000001444744aa100000014444444a100000014444444a100000014444444a100000000000000000000000000000000000
+00144444444aa100000144444aa44100001447447444a10000144444444aa10000144444444aa10000144444444aa10000000000000000000000444444440000
+001444fff444a10000001444aa4441000014444444444100001444fff444a100001444fff444a100001444fff444a1000000000000000000000044f44f440000
+00011f1ff1f11000000144144ff14100000144444444100000011f1ff1f1100000011f1ff1f1100000011f1ff1f11000000000000000000000004ffffff40000
+00001f1ff1f1000000014141f1f11000000014444444100000001f1ff1f1000000001f1ff1f1000000001f1ff1f10000000000000000000000004f1ff1f40000
+000151ffff151000000011fff1f100000000114144111000000011ffff110000000011ffff110000000011ffff110000000000000000000000004effffe40000
+001ff511115ff1000000001fff1000000011f5111155f11000015511115510000001551111551000000155111155100000000000000000000000400ff0040000
+01ff15555511ff10000001511100000001ff155555551ff1001f55555555f100001f55555555f100001f55555555f10000000000000000000000055555500000
+001115555cc11100000001f55510000001ff1c5555551ff1001f55555555f100001f55555555f100001f5555555f100000000000000000000000055557500000
+00001cccccc10000000001ff5510000000111ccccccc111001ff1c5555c1ff1001ff1c5555ff100001ff1c555ff10000000000000000000000000f5557f00000
+00001ccc1cc100000000015ff510000000001ccccccc100001ff1cccccc1ff1001ff1cccccff100001ff1ccccff100000000000000000000000000cccc000000
+000011111cc10000000001cff100000000001ccc1ccc100000111cc11cc1110000111cc11cc1000000111cc11cc1000000000000000000000000001111000000
+0000000014410000000001cc10000000000001cc1111000000001444444100000000144444410000000014444441000000000000000000000000001001000000
+00000000011000000000014441000000000001441000000000000111111000000000011111100000000001111110000000000000000000000000001001000000
+01000110000010000000001100000000000000000000000000011101111000000000000000000000000000000000000000000000000000000000000000000000
+191019f1000191000661116610000000000000000000000000144414444100000000000000000000000000000000000000000000000000000000000000000000
+9f919f91000199106667776661011000011111111000000000014444444410000000000000000000000000000000000000000000000000000000000000000000
+99999991000199916677776661066100199ffff99100000000144444444441000000000000000000000000000000000000000000000000000000000000000000
+1919199111111991661717666106671019ffffff91000000001444fff44441000000000000000000000000000000000000000000000000000000000000000000
+1ff1ff4444444491667177666100071099f1f1ff9900000000141f1ff1f141000000000000000000000000000000000000000000000000000000000000000000
+1fffff4444449991666777666111171099ff1fff9900000001441f1ff1f144100000000000000000000000000000000000000000000000000000000000000000
+01cacc9999999ff1166a886677777100999ffff999000000144411ffff1144410000000000000000000000000000000000000000000000000000000000000000
+01fffffffffffff101177777777771001113a331000000000111ee1111ee11100000000000000000000000000000000000000000000000000000000000000000
+199fff111199fff10017777777777100001fffff10000100001feeeeeeeef1000000000000000000000000000000000000000000000000000000000000000000
+01111100001111100001777777771000001ffffff1101f10001feeeeeeeef1000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000001617016710000001f9fff9ff11f1001ff1ceeeec1ff100000000000000000000000000000000000000000000000000000000000000000
+00000000000000000001717016710000001f9ff9fff1ff1001ff1cccccc1ff100000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000171701671000001ff9f9ffffff10000111cc11cc111000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000001717015710000001111111111100000001444444100000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000016566156610000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000000
 66600666fff788fffffffffffffffffffffffffffffff5ff54445444000000000000000000000000000000000000000000000000000000000000000000000000
 66655666ff77877fffffff5ff2222222fff5fff555ffffff54445444000000000000000000000000000000000000000000000000000000000000000000000000
 66655666f8887888ffffffff22222222ffffffffffffffff54465644000000000000000000000000000000000000000000000000000000000000000000000000
@@ -1364,22 +1553,22 @@ cccccccc00144444444aa10000144444444aa1000001444444444100000144444444410000014444
 00001cc11110000000111cc11cc11100000011ccc1000000000001cff1000000000011ccc100000000001ccc1ccc100000011ccc1ccc1100000011111cc10000
 0000144100000000000014444441000000014ccccc100000000001cc1000000000014ccccc100000000001111cc10000000011cc1cc110000000000014410000
 00000110000000000000011111100000000144114441000000000144410000000001441144410000000000001441000000000144144100000000000001100000
-00000000111000000000001114111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000011144410000000011444aa4410000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000144444aa10000001444744aa10000aa98aa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000144444aa44100001447447444a100a8a9aaaa0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00001444aa4441000014444444444100aaa98aaa0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000144144ff14100000144444444100008a9aa800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00014141f1f1100000001444444410000aa9aaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000011fff1f1000000001141441110000aa9a8a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000001fff1000000011f81111aaf110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000001a11100000001ff1aaaaa8a1ff1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000001fa8a10000001ff1c8aaaaa1ff1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000001ffa810000000111ccccccc1110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000001affa10000000001ccccccc1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000001cff100000000001ccc1ccc1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000001cc10000000000001cc11110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000144410000000000014410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000111000000000001114111000000000000001110111100000000111011110000000000000000000000000000000000000000000000000000000000000
+0000011144410000000011444aa4410000aaaa000014441444a100000014441444a1000000000000000000000000000000000000000000000000000000000000
+0000144444aa10000001444744aa10000aa98aa000014444444a100000014444444a100000000000000000000000000000000000000000000000000000000000
+000144444aa44100001447447444a100a8a9aaaa00144444444aa10000144444444aa10000000000000000000000000000000000000000000000000000000000
+00001444aa4441000014444444444100aaa98aaa001444fff444a100001444fff444a10000000000000000000000000000000000000000000000000000000000
+000144144ff14100000144444444100008a9aa8000011f1ff1f1100000011f1ff1f1100000000000000000000000000000000000000000000000000000000000
+00014141f1f1100000001444444410000aa9aaa000001f1ff1f1000000001f1ff1f1000000000000000000000000000000000000000000000000000000000000
+000011fff1f1000000001141441110000aa9a8a0000011ffff110000000011ffff11000000000000000000000000000000000000000000000000000000000000
+0000001fff1000000011f81111aaf110000000000001a81111a810000001a81111a8100000000000000000000000000000000000000000000000000000000000
+000001a11100000001ff1aaaaa8a1ff100000000001faaa8aa8af100001faaa8aa8af10000000000000000000000000000000000000000000000000000000000
+000001fa8a10000001ff1c8aaaaa1ff100000000001fa8aaaaaaf100001fa8aaaaaf100000000000000000000000000000000000000000000000000000000000
+000001ffa810000000111ccccccc11100000000001ff1c8aa8ff100001ff1c8aaff1000000000000000000000000000000000000000000000000000000000000
+000001affa10000000001ccccccc10000000000001ff1cccccff100001ff1ccccff1000000000000000000000000000000000000000000000000000000000000
+000001cff100000000001ccc1ccc10000000000000111cc11cc1000000111cc11cc1000000000000000000000000000000000000000000000000000000000000
+000001cc10000000000001cc11110000000000000000144444410000000014444441000000000000000000000000000000000000000000000000000000000000
+00000144410000000000014410000000000000000000011111100000000001111110000000000000000000000000000000000000000000000000000000000000
 __label__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -1538,7 +1727,7 @@ __map__
 3b2e2b2c2c2b2e2e2e2e2e2e2e2e3b3b1b1a1a1aa2a3a4a51a1a1a1a1a1a1a1b1f1f2f2f2f2f2f2f2f2f2f2f2f2f2f3b1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3b2e2b3b3b2b2e2e2e2e2e2e2e2e3b3b1b1a1a1ab2b3b4b51a1a1a1a1a1a1a1b2f2f2f2f2f3b3b3b3b2f2f2f3b3b3b3b1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3b2e2b2c2c2b2e2e2e2e2e2e2e2e3b3b1b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1b2f2f2f2f2f1f1f1f1f2f2f2f1f1f1f3b1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-3b2e2e2e2e2e2e2e2e2e2e2e2e2e2e3b1b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1b2f2f2f2f2f2f2f2f2f2f2f2f1f1f1f3b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+3b2e2e2e2e2e2e2e2e2e2e2e2e2e2e3b1b1a1a1a1a1a1a3c3c1a1a1a1a1a1a1b2f2f2f2f2f2f2f2f2f2f2f2f1f1f1f3b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3b2e2e2e2e2e2e2e2e2e2e2e2e2e2e3b1b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1b2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f3b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3b2e2e2e3b3b2e2e2e2e3b3b2e2e3b3b1b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1b3b3b2f2f2f2f2f2f2f2f2f2f3b3b3b3b1a1a1a1aa11a1a1a1a1a1a1a1a1a1a1a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3b2e2e2e2e3b2e2e2e2e3b2e2e2e2e3b1b0c1a1a1a1a1a1a1a1a1a1a1a1a1a1b1f1f2f2f2f2f3b2f2f3b2f2f1f1f1f3b1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
